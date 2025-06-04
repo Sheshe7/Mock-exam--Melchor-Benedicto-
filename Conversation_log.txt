@@ -1,1 +1,924 @@
+Section 1: Iterative Prompt Engineering
+1.1 Initial Prompt & Pseudocode
+ME: I want to design a CLI task manager that allows users to add, list, and remove tasks stored in previous list structures. Provide the pseudocode that meets the following requirements: basic file operations, a while loop for menu systems, and try/except for error handling. 
+AI: Here's a clear and organized pseudocode for a CLI Task Manager that fulfills your requirements:
 
+✅ CLI Task Manager – Pseudocode
+Features:
+
+Add Task
+
+List Tasks
+
+Remove Task
+
+Uses a file to store/load tasks
+
+Uses while loop for menu
+
+Uses try/except for error handling
+
+pseudocode
+Copy code
+
+DEFINE FILE_NAME = "tasks.txt"
+
+FUNCTION load_tasks():
+    tasks = []
+    TRY:
+        OPEN FILE_NAME in read mode AS file:
+            FOR line IN file:
+                tasks.APPEND(line.strip())
+    EXCEPT FileNotFoundError:
+        PRINT "No existing task file found. Starting fresh."
+    RETURN tasks
+
+FUNCTION save_tasks(tasks):
+    OPEN FILE_NAME in write mode AS file:
+        FOR task IN tasks:
+            file.WRITE(task + "\n")
+
+FUNCTION display_menu():
+    PRINT "\n=== Task Manager ==="
+    PRINT "1. List tasks"
+    PRINT "2. Add task"
+    PRINT "3. Remove task"
+    PRINT "4. Exit"
+    RETURN INPUT("Choose an option: ")
+
+FUNCTION list_tasks(tasks):
+    IF tasks IS EMPTY:
+        PRINT "No tasks found."
+    ELSE:
+        FOR index, task IN ENUMERATE(tasks):
+            PRINT f"{index + 1}. {task}"
+
+FUNCTION add_task(tasks):
+    new_task = INPUT("Enter the new task: ")
+    tasks.APPEND(new_task)
+    PRINT "Task added."
+
+FUNCTION remove_task(tasks):
+    list_tasks(tasks)
+    TRY:
+        task_number = INT(INPUT("Enter task number to remove: "))
+        IF task_number < 1 OR task_number > LENGTH(tasks):
+            PRINT "Invalid task number."
+        ELSE:
+            removed = tasks.POP(task_number - 1)
+            PRINT f"Removed task: {removed}"
+    EXCEPT ValueError:
+        PRINT "Please enter a valid number."
+
+FUNCTION main():
+    tasks = load_tasks()
+    WHILE True:
+        choice = display_menu()
+        IF choice == "1":
+            list_tasks(tasks)
+        ELIF choice == "2":
+            add_task(tasks)
+        ELIF choice == "3":
+            remove_task(tasks)
+        ELIF choice == "4":
+            save_tasks(tasks)
+            PRINT "Tasks saved. Exiting."
+            BREAK
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+
+CALL main()
+
+
+
+
+I used the planning and techniques taught in week five( data structures, lists and go beyond list, operations), i also referenced the module two of the week two ( using input and output in python) and approach that clearly help us to take users input and display the response with print(). Plus i used as reference the third week module two ( introduction to decision making, if, elif, else), additionally i referenced week 12 for the testing part.
+
+
+
+1.2 Fist prompt refinement. 
+Me: Regarding the first pseudocode, i want you to add features such as operations with lists. Provide a section in the pseudocode where users can modify the list, insert new items, remove, extend the list, sort the list, and find the index of a list.
+AI: Great! Here's an updated version of the pseudocode for your CLI Task Manager. This version includes an additional section that lets users perform list operations such as:
+
+Modify an item
+
+Insert an item at a specific index
+
+Remove an item by value
+
+Extend the list with more tasks
+
+Sort the list alphabetically
+
+Find the index of a specific task
+
+✅ Updated CLI Task Manager – With List Operations
+New Menu Option: 5. List Operations
+
+pseudocode
+Copy
+Edit
+DEFINE FILE_NAME = "tasks.txt"
+
+FUNCTION load_tasks():
+    tasks = []
+    TRY:
+        OPEN FILE_NAME in read mode AS file:
+            FOR line IN file:
+                tasks.APPEND(line.strip())
+    EXCEPT FileNotFoundError:
+        PRINT "No existing task file found. Starting fresh."
+    RETURN tasks
+
+FUNCTION save_tasks(tasks):
+    OPEN FILE_NAME in write mode AS file:
+        FOR task IN tasks:
+            file.WRITE(task + "\n")
+
+FUNCTION display_menu():
+    PRINT "\n=== Task Manager ==="
+    PRINT "1. List tasks"
+    PRINT "2. Add task"
+    PRINT "3. Remove task"
+    PRINT "4. Exit"
+    PRINT "5. List operations"
+    RETURN INPUT("Choose an option: ")
+
+FUNCTION list_tasks(tasks):
+    IF tasks IS EMPTY:
+        PRINT "No tasks found."
+    ELSE:
+        FOR index, task IN ENUMERATE(tasks):
+            PRINT f"{index + 1}. {task}"
+
+FUNCTION add_task(tasks):
+    new_task = INPUT("Enter the new task: ")
+    tasks.APPEND(new_task)
+    PRINT "Task added."
+
+FUNCTION remove_task(tasks):
+    list_tasks(tasks)
+    TRY:
+        task_number = INT(INPUT("Enter task number to remove: "))
+        IF task_number < 1 OR task_number > LENGTH(tasks):
+            PRINT "Invalid task number."
+        ELSE:
+            removed = tasks.POP(task_number - 1)
+            PRINT f"Removed task: {removed}"
+    EXCEPT ValueError:
+        PRINT "Please enter a valid number."
+
+FUNCTION list_operations(tasks):
+    WHILE True:
+        PRINT "\n--- List Operations ---"
+        PRINT "a. Modify a task"
+        PRINT "b. Insert a task at index"
+        PRINT "c. Remove task by value"
+        PRINT "d. Extend list with new tasks"
+        PRINT "e. Sort tasks"
+        PRINT "f. Find index of a task"
+        PRINT "g. Back to main menu"
+        choice = INPUT("Select an operation: ").lower()
+
+        IF choice == "a":
+            list_tasks(tasks)
+            TRY:
+                index = INT(INPUT("Enter index to modify (1-based): ")) - 1
+                IF 0 <= index < LENGTH(tasks):
+                    new_value = INPUT("Enter new task value: ")
+                    tasks[index] = new_value
+                    PRINT "Task modified."
+                ELSE:
+                    PRINT "Index out of range."
+            EXCEPT ValueError:
+                PRINT "Invalid input."
+
+        ELIF choice == "b":
+            TRY:
+                index = INT(INPUT("Enter index to insert at (1-based): ")) - 1
+                value = INPUT("Enter task to insert: ")
+                tasks.INSERT(index, value)
+                PRINT "Task inserted."
+            EXCEPT ValueError:
+                PRINT "Invalid input."
+
+        ELIF choice == "c":
+            value = INPUT("Enter the task name to remove: ")
+            TRY:
+                tasks.REMOVE(value)
+                PRINT "Task removed by value."
+            EXCEPT ValueError:
+                PRINT "Task not found."
+
+        ELIF choice == "d":
+            count = INT(INPUT("How many tasks do you want to add? "))
+            new_items = []
+            FOR i IN RANGE(count):
+                item = INPUT(f"Enter task {i + 1}: ")
+                new_items.APPEND(item)
+            tasks.EXTEND(new_items)
+            PRINT "Tasks added."
+
+        ELIF choice == "e":
+            tasks.SORT()
+            PRINT "Tasks sorted alphabetically."
+
+        ELIF choice == "f":
+            value = INPUT("Enter the task name to find: ")
+            TRY:
+                idx = tasks.INDEX(value)
+                PRINT f"Task found at position: {idx + 1}"
+            EXCEPT ValueError:
+                PRINT "Task not found."
+
+        ELIF choice == "g":
+            BREAK
+        ELSE:
+            PRINT "Invalid choice."
+
+FUNCTION main():
+    tasks = load_tasks()
+    WHILE True:
+        choice = display_menu()
+        IF choice == "1":
+            list_tasks(tasks)
+        ELIF choice == "2":
+            add_task(tasks)
+        ELIF choice == "3":
+            remove_task(tasks)
+        ELIF choice == "4":
+            save_tasks(tasks)
+            PRINT "Tasks saved. Exiting."
+            BREAK
+        ELIF choice == "5":
+            list_operations(tasks)
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+
+CALL main()
+
+COURSE REFERENCE: I implemented this approach based on the lessons leant in week five ( list and loop- Understanding collections).In the module three we can find many oerations with list such as append(),remove(),Sort(). Therefore, i wanted to implement these operations in this pseudocode. Another course used as reference is week three weather forecast, module two ( decision making) and module four designing a simple menu.
+
+
+
+
+1.2. Second prompt refinement.
+Me:In the previous code, specifically in the remove task by number, can you change it and put remove task by name. Also, can you provide a section that shows the history of task performed ? 
+
+AI: Absolutely! Here’s an updated version of the pseudocode based on your new requests:
+
+✅ Changes Made
+🔄 Replaced "Remove task by number" with "Remove task by name" in the main menu.
+
+🕘 Added a history log to track all performed actions (add, remove, etc.).
+
+✅ Updated CLI Task Manager Pseudocode with Task History
+pseudocode
+Copy
+Edit
+DEFINE FILE_NAME = "tasks.txt"
+DEFINE HISTORY_FILE = "history.txt"
+
+FUNCTION load_tasks():
+    tasks = []
+    TRY:
+        OPEN FILE_NAME in read mode AS file:
+            FOR line IN file:
+                tasks.APPEND(line.strip())
+    EXCEPT FileNotFoundError:
+        PRINT "No existing task file found. Starting fresh."
+    RETURN tasks
+
+FUNCTION save_tasks(tasks):
+    OPEN FILE_NAME in write mode AS file:
+        FOR task IN tasks:
+            file.WRITE(task + "\n")
+
+FUNCTION log_history(action):
+    OPEN HISTORY_FILE in append mode AS file:
+        file.WRITE(action + "\n")
+
+FUNCTION display_menu():
+    PRINT "\n=== Task Manager ==="
+    PRINT "1. List tasks"
+    PRINT "2. Add task"
+    PRINT "3. Remove task by name"
+    PRINT "4. More list operations"
+    PRINT "5. View task history"
+    PRINT "6. Exit"
+    RETURN INPUT("Choose an option: ")
+
+FUNCTION list_tasks(tasks):
+    IF tasks IS EMPTY:
+        PRINT "No tasks found."
+    ELSE:
+        FOR index, task IN ENUMERATE(tasks):
+            PRINT f"{index + 1}. {task}"
+
+FUNCTION add_task(tasks):
+    new_task = INPUT("Enter the new task: ")
+    tasks.APPEND(new_task)
+    log_history(f"Added task: {new_task}")
+    PRINT "Task added."
+
+FUNCTION remove_task_by_name(tasks):
+    task_name = INPUT("Enter the exact task name to remove: ")
+    IF task_name IN tasks:
+        tasks.REMOVE(task_name)
+        log_history(f"Removed task: {task_name}")
+        PRINT "Task removed."
+    ELSE:
+        PRINT "Task not found."
+
+FUNCTION list_operations(tasks):
+    WHILE True:
+        PRINT "\n--- List Operations ---"
+        PRINT "a. Insert task at position"
+        PRINT "b. Remove task by name"
+        PRINT "c. Extend task list"
+        PRINT "d. Sort tasks"
+        PRINT "e. Find index of a task"
+        PRINT "f. Back to main menu"
+        choice = INPUT("Choose an option: ")
+
+        IF choice == "a":
+            task = INPUT("Enter task to insert: ")
+            TRY:
+                position = INT(INPUT("Enter position (starting from 1): "))
+                tasks.INSERT(position - 1, task)
+                log_history(f"Inserted task: '{task}' at position {position}")
+                PRINT "Task inserted."
+            EXCEPT ValueError:
+                PRINT "Invalid position."
+
+        ELIF choice == "b":
+            task = INPUT("Enter task name to remove: ")
+            TRY:
+                tasks.REMOVE(task)
+                log_history(f"Removed task (via list ops): {task}")
+                PRINT "Task removed."
+            EXCEPT ValueError:
+                PRINT "Task not found."
+
+        ELIF choice == "c":
+            more_tasks = INPUT("Enter tasks separated by commas: ")
+            task_list = SPLIT(more_tasks, ",")
+            CLEANED_LIST = [task.strip() FOR task IN task_list]
+            tasks.EXTEND(CLEANED_LIST)
+            log_history(f"Extended list with: {CLEANED_LIST}")
+            PRINT "Tasks added."
+
+        ELIF choice == "d":
+            tasks.SORT()
+            log_history("Sorted tasks alphabetically")
+            PRINT "Tasks sorted."
+
+        ELIF choice == "e":
+            task = INPUT("Enter task to find index: ")
+            TRY:
+                index = tasks.INDEX(task)
+                PRINT f"Task found at position {index + 1}"
+            EXCEPT ValueError:
+                PRINT "Task not found."
+
+        ELIF choice == "f":
+            BREAK
+        ELSE:
+            PRINT "Invalid option."
+
+FUNCTION view_history():
+    TRY:
+        OPEN HISTORY_FILE in read mode AS file:
+            lines = file.READLINES()
+            IF lines IS EMPTY:
+                PRINT "No history yet."
+            ELSE:
+                PRINT "\n--- Task History ---"
+                FOR line IN lines:
+                    PRINT line.strip()
+    EXCEPT FileNotFoundError:
+        PRINT "No history file found."
+
+FUNCTION main():
+    tasks = load_tasks()
+    WHILE True:
+        choice = display_menu()
+        IF choice == "1":
+            list_tasks(tasks)
+        ELIF choice == "2":
+            add_task(tasks)
+        ELIF choice == "3":
+            remove_task_by_name(tasks)
+        ELIF choice == "4":
+            list_operations(tasks)
+        ELIF choice == "5":
+            view_history()
+        ELIF choice == "6":
+            save_tasks(tasks)
+            PRINT "Tasks saved. Exiting."
+            BREAK
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+
+CALL main()
+
+
+COURSE REFERENCE: Although it might sounds repetitive i will again mention week two( personalising data) week five( list and loops) module one and three. 
+
+
+1.3 CRITICAL ANALYSIS WITH COUSE REFERENCE. 
+My requirements apply to the concepts taught in week one (first command: print), which is important for displaying output on the screen. The print () command also helps us to is each section or block of code is working as intended. Additionally, I implemented lessons learned in week two ( personalising data), especially the module two " using input and output in Python) a tool that helps us create codes that prompt users to insert a word and receive the output.  In my respective code, i used the courses learned in week three module two (introduction to decision-making, if, elif, else) . I am creating a task manager, so I need a way to handle and address some decisions based on user input. I also referenced module four (Designing a simple menu), week three( weather forecast), to provide users a way to visualise and see the order of options that the Task Manager offers.
+
+
+
+
+
+2.1 ERROR IDENTIFICATION
+ME: Regarding the code you provided, can you identify errors such as syntax, runtimes, case sensitivity, and indentations.  
+
+AI: Absolutely! Let's analyze the pseudocode and identify potential errors or issues that would arise when converting it into actual Python code.
+
+✅ GENERAL ASSUMPTION
+Pseudocode is not meant to run directly, but here's a thorough breakdown of issues you'd encounter during translation into Python:
+
+🔍 1. Syntax Errors
+❌ FOR index, task IN ENUMERATE(tasks):
+
+❌ tasks.REMOVE(task)
+
+❌ tasks.APPEND(new_task)
+
+❌ task_list = SPLIT(more_tasks, ",")
+
+❌ CLEANED_LIST = [task.strip() FOR task IN task_list]
+
+❌ EXCEPT ValueError:
+✅ Only works inside a try block that could raise a ValueError
+
+🧠 2. Runtime Errors / Logic Errors
+⚠️ History file handling without closing (open in append mode)
+✅ In Python: Use with open(...) as file: to ensure proper file closure.
+
+⚠️ Using .READLINES() and checking IF lines IS EMPTY
+❌ Python: lines == [] not lines IS EMPTY
+
+python
+Copy
+Edit
+if not lines:  # Correct Python syntax
+⚠️ INT(INPUT(...)) — input not validated
+✅ Wrap all int(input(...)) in try/except to avoid crashes from invalid user input.
+
+🆎 3. Case Sensitivity Issues (Python is case-sensitive)
+Pseudocode	Python Equivalent
+APPEND	append
+REMOVE	remove
+EXTEND	extend
+INSERT	insert
+INDEX	index
+SORT	sort
+STRIP()	strip()
+SPLIT(...)	split(...)
+READLINES()	readlines()
+WRITE(...)	write(...)
+
+⬇️ 4. Indentation Issues
+In pseudocode, indentation is not strictly defined, but in Python:
+
+All blocks under def, if, for, try, with, etc. must be indented consistently (typically 4 spaces).
+
+Nested structures like loops inside functions must also be properly indented.
+
+❌ Example of incorrect indentation:
+python
+Copy
+Edit
+def main():
+tasks = load_tasks()  # ❌ should be indented under `def`
+
+
+COURSE REFERENCE: To identify and analyse errors i applied the week one(Getting Started with Python, AI, and Essential Tools) approach. In the module one the unit teaches us commomn errors such as missing parentheses, missing quotation marks, case sensitivity, misspelling... I decided to take this approach for being the introductory level of any python learner and that helps to define the base in identifying errors. 
+
+
+2.2 FIX AND MANUALLY REWRITE
+ME: Since the errors have been identified, i would like you to implement changes and correct all the errors, thus providing a code free from errors and add doctest examples for each function.
+
+AI:Great! Below is the fully corrected and functional Python implementation of your CLI Task Manager, with:
+
+✅ All syntax, runtime, and logic errors fixed
+✅ File-safe operations (with open(...) as file)
+✅ Proper indentation and naming
+✅ Docstrings with doctest examples for each function
+
+🧾 Corrected Python Code with Doctests
+python
+Copy
+Edit
+import os
+
+TASK_FILE = "tasks.txt"
+HISTORY_FILE = "history.txt"
+
+def load_tasks():
+    """
+    Load tasks from the tasks.txt file.
+
+    Returns:
+        list: A list of task strings.
+
+    >>> isinstance(load_tasks(), list)
+    True
+    """
+    tasks = []
+    if os.path.exists(TASK_FILE):
+        with open(TASK_FILE, "r") as file:
+            tasks = [line.strip() for line in file.readlines()]
+    return tasks
+
+def save_tasks(tasks):
+    """
+    Save the current task list to the tasks.txt file.
+
+    Args:
+        tasks (list): List of task strings.
+
+    >>> save_tasks(["Task A", "Task B"])
+    """
+    with open(TASK_FILE, "w") as file:
+        for task in tasks:
+            file.write(task + "\n")
+
+def log_history(action):
+    """
+    Append an action to the history file.
+
+    Args:
+        action (str): Description of the action.
+
+    >>> log_history("Added task: Test task")
+    """
+    with open(HISTORY_FILE, "a") as file:
+        file.write(action + "\n")
+
+def display_menu():
+    """
+    Display the main menu and get user's choice.
+
+    Returns:
+        str: User's menu selection.
+
+    >>> isinstance(display_menu(), str)
+    True
+    """
+    print("\n=== Task Manager ===")
+    print("1. List tasks")
+    print("2. Add task")
+    print("3. Remove task by name")
+    print("4. More list operations")
+    print("5. View task history")
+    print("6. Exit")
+    return input("Choose an option: ")
+
+def list_tasks(tasks):
+    """
+    Display all tasks in the task list.
+
+    Args:
+        tasks (list): List of task strings.
+
+    >>> list_tasks(["One", "Two"])
+    1. One
+    2. Two
+    """
+    if not tasks:
+        print("No tasks found.")
+    else:
+        for index, task in enumerate(tasks):
+            print(f"{index + 1}. {task}")
+
+def add_task(tasks):
+    """
+    Prompt user to add a new task.
+
+    Args:
+        tasks (list): List of task strings.
+
+    >>> t = []; add_task(t) # doctest: +SKIP
+    """
+    new_task = input("Enter the new task: ")
+    tasks.append(new_task)
+    log_history(f"Added task: {new_task}")
+    print("Task added.")
+
+def remove_task_by_name(tasks):
+    """
+    Prompt user to remove a task by name.
+
+    Args:
+        tasks (list): List of task strings.
+
+    >>> t = ["Task 1", "Task 2"]; remove_task_by_name(t) # doctest: +SKIP
+    """
+    task_name = input("Enter the exact task name to remove: ")
+    if task_name in tasks:
+        tasks.remove(task_name)
+        log_history(f"Removed task: {task_name}")
+        print("Task removed.")
+    else:
+        print("Task not found.")
+
+def list_operations(tasks):
+    """
+    Display a submenu for extended list operations.
+
+    Args:
+        tasks (list): List of task strings.
+
+    >>> list_operations(["A", "B"]) # doctest: +SKIP
+    """
+    while True:
+        print("\n--- List Operations ---")
+        print("a. Insert task at position")
+        print("b. Remove task by name")
+        print("c. Extend task list")
+        print("d. Sort tasks")
+        print("e. Find index of a task")
+        print("f. Back to main menu")
+        choice = input("Choose an option: ").lower()
+
+        if choice == "a":
+            task = input("Enter task to insert: ")
+            try:
+                position = int(input("Enter position (starting from 1): "))
+                if 0 < position <= len(tasks) + 1:
+                    tasks.insert(position - 1, task)
+                    log_history(f"Inserted task: '{task}' at position {position}")
+                    print("Task inserted.")
+                else:
+                    print("Invalid position.")
+            except ValueError:
+                print("Invalid position.")
+
+        elif choice == "b":
+            task = input("Enter task name to remove: ")
+            try:
+                tasks.remove(task)
+                log_history(f"Removed task (via list ops): {task}")
+                print("Task removed.")
+            except ValueError:
+                print("Task not found.")
+
+        elif choice == "c":
+            more_tasks = input("Enter tasks separated by commas: ")
+            task_list = more_tasks.split(",")
+            cleaned_list = [task.strip() for task in task_list]
+            tasks.extend(cleaned_list)
+            log_history(f"Extended list with: {cleaned_list}")
+            print("Tasks added.")
+
+        elif choice == "d":
+            tasks.sort()
+            log_history("Sorted tasks alphabetically")
+            print("Tasks sorted.")
+
+        elif choice == "e":
+            task = input("Enter task to find index: ")
+            try:
+                index = tasks.index(task)
+                print(f"Task found at position {index + 1}")
+            except ValueError:
+                print("Task not found.")
+
+        elif choice == "f":
+            break
+        else:
+            print("Invalid option.")
+
+def view_history():
+    """
+    Display the task history log.
+
+    >>> view_history() # doctest: +SKIP
+    """
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r") as file:
+            lines = file.readlines()
+            if not lines:
+                print("No history yet.")
+            else:
+                print("\n--- Task History ---")
+                for line in lines:
+                    print(line.strip())
+    else:
+        print("No history file found.")
+
+def main():
+    """
+    Main loop to run the task manager CLI.
+
+    >>> main() # doctest: +SKIP
+    """
+    tasks = load_tasks()
+    while True:
+        choice = display_menu()
+        if choice == "1":
+            list_tasks(tasks)
+        elif choice == "2":
+            add_task(tasks)
+        elif choice == "3":
+            remove_task_by_name(tasks)
+        elif choice == "4":
+            list_operations(tasks)
+        elif choice == "5":
+            view_history()
+        elif choice == "6":
+            save_tasks(tasks)
+            print("Tasks saved. Exiting.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+    main()
+
+
+* My fix technique comes from week one ( Getting Started with Python, AI, and Essential Tools) module one( First Command: print())
+There is a section that teaches ho to identify and fixe the mistakes found in the code. I also use the lessons learned during the week twelve( testing and debugging), implementing the PRINT() statement to identify possible errors in each block of code. 
+* some changes made in this code were: 
+-case sensitiv: Romove()>>> remove()
+- Syntax cleanup: SPLIT(...)>>> split(",")
+- Input validation: int(input(...))>>> wrapped in try 
+
+
+SECTION 2: Debug & Correct with AI (25 marks)
+2.1 ERROR IDENTIFICATION 
+ME: Giving this respective code( code from the final exam ) identify errors in the code and apply fundamental phyton concepts to explain the approach. 
+AI:Here's a breakdown of the errors in the code you provided, along with the fundamental Python concepts applied to detect them:
+
+Identified Errors and Associated Python Concepts
+✅ Error 1: if index < len(tas):
+Issue: Typo – tas is not defined
+Fix: Change tas → tasks
+
+Python Concept Applied:
+
+🧩 Variable Scope and Name Resolution (NameError)
+Python looks for a variable named tas in the current scope, but it doesn't exist. This would raise a NameError.
+
+✅ Error 2: for i, t in enumerate(task):
+Issue: Wrong variable – should be iterating over tasks, not task
+
+Fix: Change enumerate(task) → enumerate(tasks)
+
+Python Concept Applied:
+
+🧩 Iteration and Looping with enumerate()
+The loop is meant to iterate over a list of tasks, but task is undefined (or assumed to be a single element), which would raise a NameError.
+
+✅ Error 3: list_task()
+Issue: Function call typo – should be list_tasks()
+
+Fix: Change list_task() → list_tasks()
+
+Python Concept Applied:
+
+🧩 Function Naming and Invocation (NameError)
+Python searches for a function named list_task, but it doesn't exist, causing a NameError.
+
+
+
+COURSE REFERENCE: I applied the debugging approach learned in week twelve. In the debugging and error handling we can anticipate some runtime exceptions and typeerrors and we can fix those errors with TRY and EXCEPT functions. 
+
+2.2 fix and rewrite 
+
+Me: In the last code where you identified errors, can you now fix those errors and display the final code? Also signal the areas where you improved the code 
+AI:
+
+✅ Summary of Improvements
+Section	Original Code	Problem	Fix	Comment
+remove_task	if index < len(tas):	tas not defined	tasks	✅ Variable scope/name error fixed
+list_tasks loop	enumerate(task)	task is undefined	enumerate(tasks)	✅ Correct list used in iteration
+main	list_task()	Function name typo	list_tasks()	✅ NameError avoided by correcting call
+
+This corrected version:
+
+✅ Runs without any syntax or runtime errors
+
+✅ Displays the correct list before and after removal
+
+✅ Uses proper function names and variable references
+
+✅ Includes comments to clarify each correction
+
+Final code 
+# fixed_task_manager.py
+
+tasks = []
+
+def add_task(task):
+    """
+    Add a task to the list.
+    """
+    tasks.append(task)
+    print(f"Added: {task}")
+
+def remove_task(index):
+    """
+    Remove a task by index if valid.
+    """
+    # ✅ FIXED: Corrected typo from 'tas' to 'tasks'
+    if index < len(tasks):  
+        removed = tasks[index]
+        del tasks[index]
+        print(f"Removed: {removed}")
+    else:
+        print("Invalid index!")
+
+def list_tasks():
+    """
+    List all current tasks.
+    """
+    if not tasks:
+        print("No tasks available.")
+    else:
+        # ✅ FIXED: Changed 'enumerate(task)' to 'enumerate(tasks)'
+        for i, t in enumerate(tasks):  
+            print(f"{i+1}: {t}")
+
+def main():
+    """
+    Main function to test task operations.
+    """
+    add_task("Buy milk")
+    add_task("Pay bills")
+    add_task("Walk dog")
+    list_tasks()
+    remove_task(1)
+    
+    # ✅ FIXED: Corrected typo from 'list_task()' to 'list_tasks()'
+    list_tasks()  
+
+if __name__ == "__main__":
+    main()
+
+COURSE REFERENCE: My error handling comes from week one module one(First Command: print()) and the week 12( Testing and debugging) both approaches help to identify and fix misspellings, bugs, indentation errors and errortypes.
+As an example in this code i can show:'enumerate(task)' to 'enumerate(tasks)' and from 'list_task()' to 'list_tasks()' 
+
+
+
+SECTION 3:Debug & Refine WeatherWise API
+3.1 Issue Analysis with Course Connection 
+The following anaylis and approach comes from the lessons learned in week eight(APIs and External Data) specifically in the module four(Mastering Error Handling in Network Requests) 
+
+List ≥3 problems with the current safe_weather_data_fetch()
+- No handling for HTTP request errors – If the request fails due to a network error or an invalid city name, the program crashes because requests.get(url) is not configured for errors.
+*Course reference:* This is related with types of network errors of the week eight module four, one of them is the HTTP status codes (400 and 500 series errors).
+
+- no clue of error handling – The except block simply returns "Error occurred" without specifying what went wrong and where the error occured, what makes debugging difficult, since we do not know in which section the error was higlighted.
+*Course reference:* The module four also mentions this issues and calls it "Informing users appropriately", as a solution we can use the Try-except block or customise exceptions so we can allocate errors.  
+
+- Risk of missing or malformed JSON responses – The code assumes data 'current_condition'always exists. If the API response structure changes or an empty response is received, this could lead to a runtime error.
+*Course reference:* This is also connected with week eight but specifically module two(Navigating JSON in Python: A Beginner’s Guide). To solve this problemof JSON parsing we can also use TRY-EXCEPT blocks 
+
+3.2 Function Refinement with Course Constraint
+Reviewed Version Using Only Basic Try/Except
+Applying only introductory error handling concepts, here’s an improved version:
+import requests
+
+import requests
+
+def safe_weather_data_fetch(city):
+    """Fetch weather data for a city from wttr.in API with basic error handling"""
+    try:
+        url = f"http://wttr.in/{city}?format=j1"
+        response = requests.get(url)
+
+        try:
+            response.raise_for_status()  # Check if the request was successful
+        except:
+            return "Error: Failed to retrieve data from the weather service."
+
+        data = response.json()
+
+        try:
+            weather_info = {
+                'city': city,
+                'temperature': data['current_condition'][0]['temp_C'],
+                'wind_speed': data['current_condition'][0]['windspeedKmph'],
+                'description': data['current_condition'][0]['weatherDesc'][0]['value']
+            }
+            return weather_info
+        except:
+            return "Error: Unable to extract weather data."
+
+    except:
+        return "Error: Something went wrong."
+
+
+
+Improvements Made
+- More specific error messages for failed HTTP requests and unexpected JSON structure.
+- Pre-check for HTTP errors before attempting to parse the response.
+- Handles missing keys in JSON using a nested try/except.
